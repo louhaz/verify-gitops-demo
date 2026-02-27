@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: isvd-server-config
+data:
+  config.yaml: |
+    general:
+      ports:
+        ldap: 0
+      
+      ssl:
+        cert-label: server-key
+
+      json-logging: false
+
+      license:
+        accept: limited
+        key: secret:isvd-secret/license-key
+
+      key-stash: "B64:GAAAAHM1Q2lqMCtLYVppZUhOemprZi9XSGc9PthOcHIiXmA9RlB0Rji/nsd3MpTYvRzUn5joE804v57HdzKU2L0c1J+Y6BPNnceUEUr3I0I4v57HdzKU2L0c1J+Y6BPNnceUEUr3I0I/+VsYL0fIEQ=="
+
+      admin:
+        dn: cn=root
+        pwd: secret:isvd-secret/admin_password
+
+    keyfile:
+      keys:
+        - label: server-key
+          key: secret:isvd-secret/server_key
+
+    server:
+      replication:
+        admin:
+          dn: cn=replcred
+          pwd: secret:isvd-secret/replication_password
+
+      suffixes:
+        - dn: o=sample
+          object-classes:
+            - organization
+        - dn: dc=ibm,dc=com
+          object-classes:
+            - domain
+        - dn: secAuthority=Default
+          object-classes:
+            - secAuthorityInfo
+            - eApplicationSystem
+            - eSystem
+            - cimLogicalElement
+            - cimManagedSystemElement
+            - cimManagedElement
+          attributes:
+            - "version=6.0"
+            

@@ -1,0 +1,39 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: ibm-verify-argo-role
+  namespace: ibm-verify
+rules:
+  - verbs:
+      - '*'
+    apiGroups:
+      - ibm.com
+    resources:
+      - ibmsecurityverifyaccesses
+      - ibmsecurityverifydirectories
+  - verbs:
+      - '*'
+    apiGroups:
+      - ''
+    resources:
+      - services
+      - serviceaccounts
+  - verbs:
+      - '*'
+    apiGroups:
+      - route.openshift.io
+    resources:
+      - routes
+  - verbs:
+      - '*'
+    apiGroups:
+      - apps
+    resources:
+      - deployments
+  - verbs:
+      - '*'
+    apiGroups:
+      - security.openshift.io
+    resources:
+      - '*'
+      

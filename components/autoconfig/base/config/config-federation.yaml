@@ -1,0 +1,112 @@
+# Config for local/embedded ldap using IBM Directory Server as federated LDAP
+container:
+  k8s_deployments:
+    namespace: "ibm-verify"
+    runtime: 
+      - "ivia-runtime"
+    webseal:
+      - "via-wrpi"
+  admin_cfg:
+    session_timeout: 720
+  account_management:
+    users:
+    - name: "cfgsvc"
+      operation: "update"
+      password: !secret ibm-verify/ivia-secrets:cfgsvc-passwd
+  management_authorization:
+    authorization_enforcement: True
+    roles:
+    - operation: "update"
+      name: "Configuration Service"
+      users:
+      - name: "cfgsvc"
+        type: "local"
+      features:
+      - name: "shared_volume"
+        access: "w"
+  ssl_certificates:
+    - name: "lmi_trust_store"
+      signer_certificates:
+      - "/tmp/pki/postgresql.pem"
+      #- "/tmp/pki/openldap.pem"
+    - name: "rt_profile_keys"
+      signer_certificates:
+      - "/tmp/pki/postgresql.pem"
+    - name: "isvd"
+      signer_certificates:
+      - "/tmp/pki/server_cert/server_cert" 
+  cluster:
+    runtime_database:
+      host: "ivia-runtime-db.ibm-verify.svc.cluster.local"
+      port: 5432
+      type: "postgresql"
+      user: "ivia"
+      password: !secret ibm-verify/ivia-secrets:postgres-passwd
+      ssl: False
+      db_name: "ivia"
+  activation: #Activation codes
+    webseal: !secret ibm-verify/ivia-secrets:base-code
+    access_control: !secret ibm-verify/ivia-secrets:aac-code
+    federation: !secret ibm-verify/ivia-secrets:fed-code
+webseal:
+  runtime:
+    admin_user: sec_master
+    admin_password: !secret ibm-verify/ivia-secrets:sec-passwd    
+    admin_cert_lifetime: 1460
+    domain: "Default"
+    user_registry: local
+    policy_server: local
+    stanza_configuration:
+    - operation: "add"
+      resource: "ldap.conf"
+      stanza: "server:ISVD Proxy"
+      entry: "host"
+      value: "isvd-proxy"
+    - operation: "add"
+      resource: "ldap.conf"
+      stanza: "server:ISVD Proxy"
+      entry: "port"
+      value: "9636"
+    - operation: "add"
+      resource: "ldap.conf"
+      stanza: "server:ISVD Proxy"
+      entry: "bind-dn"
+      value: "cn=manager,cn=ibmpolicies"
+    - operation: "add"
+      resource: "ldap.conf"
+      stanza: "server:ISVD Proxy"
+      entry: "ssl-enabled"
+      value: "yes"
+    - operation: "add"
+      resource: "ldap.conf"
+      stanza: "server:ISVD Proxy"
+      entry: "suffix"
+      value: "o=sample"
+    - operation: "add"
+      resource: "ldap.conf"
+      stanza: "server:ISVD Proxy"
+      entry: "bind-pwd"
+      value: "passw0rd1"
+    - operation: "add"
+      resource: "ldap.conf"
+      stanza: "server:ISVD Proxy"
+      entry: "ssl-keyfile"
+      value: "isvd"
+  reverse_proxy:
+     - name: "default"
+       # The host parameter will always be the hostname of the config container in a container deployment
+       host: "ivia-config.ibm-verify.svc.cluster.local"
+       http:
+         enabled: "no"
+       https:
+         enabled: "yes"
+       ldap:
+         ssl_yn: "no"
+         port: 389
+       domain: "Default"
+       junctions:
+         - junction_point: "/demo"
+           description: "demo junction point"
+           junction_type: "tcp"
+           server_hostname: demo-app.ibm-verify.svc.cluster.local
+           server_port: 8080

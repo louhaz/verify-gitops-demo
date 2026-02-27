@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: phpldapadmin
+  namespace: openshift-gitops
+  labels:
+    group: applications
+  annotations:
+    argocd.argoproj.io/sync-wave: "50"
+spec:
+  destination:
+    namespace: ibm-verify
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: ./components/phpldapadmin/base
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

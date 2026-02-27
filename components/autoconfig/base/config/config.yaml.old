@@ -1,0 +1,142 @@
+container:
+  k8s_deployments:
+    namespace: "ibm-verify"
+    runtime: 
+      - "ivia-runtime"
+    webseal:
+      - "via-wrpi"
+  admin_cfg:
+    session_timeout: 720
+  account_management:
+    users:
+    - name: "cfgsvc"
+      operation: "update"
+      password: !secret ibm-verify/ivia-secrets:cfgsvc-passwd
+  management_authorization:
+    authorization_enforcement: True
+    roles:
+    - operation: "update"
+      name: "Configuration Service"
+      users:
+      - name: "cfgsvc"
+        type: "local"
+      features:
+      - name: "shared_volume"
+        access: "w"
+  ssl_certificates:
+  - name: "lmi_trust_store"
+    signer_certificates:
+    - "/tmp/pki/postgresql.pem"
+    - "/tmp/pki/openldap.pem"
+  - name: "rt_profile_keys"
+    signer_certificates:
+    - "/tmp/pki/postgresql.pem"
+    #- "/tmp/pki/tls.crt"
+  cluster:
+    runtime_database:
+      host: "ivia-runtime-db.ibm-verify.svc.cluster.local"
+      port: 5432
+      type: "postgresql"
+      user: "ivia"
+      password: !secret ibm-verify/ivia-secrets:postgres-passwd
+      ssl: False
+      ssl_keystore: "rt_profile_keys"
+      db_name: "ivia"
+  activation: #Activation codes
+    webseal: !secret ibm-verify/ivia-secrets:base-code
+    access_control: !secret ibm-verify/ivia-secrets:aac-code
+    federation: !secret ibm-verify/ivia-secrets:fed-code
+webseal:
+  runtime:
+    policy_server: "ldap"
+    user_registry: "ldap"
+    ldap:
+      host: "openldap.ibm-verify.svc"
+      port: 389
+      dn: !secret ibm-verify/ivia-secrets:ldap-binddn
+      dn_password: !secret ibm-verify/ivia-secrets:ldap-passwd
+      #key_file: "lmi_trust_store"
+    clean_ldap: True
+    domain: "Default"
+    admin_user: !secret ibm-verify/ivia-secrets:sec-user
+    admin_password: !secret ibm-verify/ivia-secrets:sec-passwd
+    admin_cert_lifetime: 1460
+    #ssl_compliance: "fips"
+  reverse_proxy:
+  - name: "default"
+    host: "ivia-runtime.ibm-verify.svc"
+    http:
+      enabled: "no"
+    https:
+      enabled: "yes"
+    domain: "Default"
+    ldap:
+      ssl_yn: "no"
+      port: 389
+      #key_file: "lmi_trust_store"
+    aac_configuration:
+      hostname: "localhost"
+      port: 443
+      runtime:
+        user: !secret ibm-verify/ivia-secrets:rtime-user
+        password: !secret ibm-verify/ivia-secrets:rtime-passwd
+      junction: "/mga"
+      reuse_acls: True
+      reuse_certs: True
+      mapping_rules:
+      # Can also use directory, see example here: https://github.com/lachlan-ibm/ibmvia_autoconf/blob/8d4175f6fcf87f1da3710a9c43e80a2299a21def/examples/mmfa_demo/mmfa_config.yaml#L87C5-L87C23
+      - type: InfoMap
+        files:
+          - mapping-rules/rule1.js
+          - mapping-rules/rule2.js
+  #    runtime:
+  #      hostname: "ivia-runtime.ibm-verify.svc"
+  #      port: 9443
+  #      user: !secret ibm-verify/ivia-secrets:rtime-user
+  #      password: !secret ibm-verify/ivia-secrets:rtime-passwd
+  #    junction: "/mga"
+  #    reuse_certs: True
+  #    reuse_acls: True
+  #pdadmin:
+  #  users:
+  #  - #name: "testuser"
+  #    #dn: "uid=user1,ou=People,dc=local,dc=io"
+  #    #password: !secret ibm-verify/ivia-secrets:test-passwd
+  #    name: "admin"
+  #    dn: !secret ibm-verify/ivia-secrets:sec-user
+  #    password: !secret ibm-verify/ivia-secrets:sec-passwd
+#access_control:
+  #authentication:
+  #  policies:
+  #  - name: "Username Password"
+  #    description: "Username and password authentication policy."
+  #    enabled: true
+  #    uri: "urn:ibm:security:authentication:asf:password"
+  #    policy: "<Policy xmlns=\"urn:ibm:security:authentication:policy:1.0:schema\" PolicyId=\"urn:ibm:security:authentication:asf:password\"><Description>Username and password authentication policy.</Description><Step type=\"Authenticator\"><Authenticator AuthenticatorId=\"urn:ibm:security:authentication:asf:mechanism:password\"/></Step><Actions><Action On=\"null\" type=\"null\"><AttributeAssignments/></Action></Actions></Policy>"
+  #  mechanisms:
+  #  - id: "7"
+  #    name: "Username Password"
+  #    type: "Username Password"
+  #    description: "Username password authentication"
+  #    uri: "urn:ibm:security:authentication:asf:mechanism:password"
+  #    properties:
+  #    - usernamePasswordAuthentication.enableLastLogin: "false"
+  #    - usernamePasswordAuthentication.loginFailuresPersistent: "false"
+  #    - usernamePasswordAuthentication.maxServerConnections: "16"
+  #    - usernamePasswordAuthentication.mgmtDomain: "Default"
+  #    - usernamePasswordAuthentication.sslServerStartTLS: "false"
+  #    - usernamePasswordAuthentication.useFederatedDirectoriesConfig: "false"
+  #    - usernamePasswordAuthentication.userSearchFilter: "(|(objectclass=ePerson)(objectclass=Person))"
+  #    - usernamePasswordAuthentication.ldapBindDN: !secret ibm-verify/ivia-secrets:ldap-binddn
+  #    - usernamePasswordAuthentication.ldapHostName: "openldap.ibm-verify.svc"
+  #    - usernamePasswordAuthentication.ldapBindPwd: !secret ibm-verify/ivia-secrets:ldap-passwd
+  #    - usernamePasswordAuthentication.ldapPort: "389"
+  #    - usernamePasswordAuthentication.sslEnabled: "false"
+  #    - usernamePasswordAuthentication.sslTrustStore: "lmi_trust_store"
+  #    attributes:
+  #    - selector: "mobile"
+  #      name: "mobileNumber"
+  #      namespace: "urn:ibm:security:authentication:asf:mechanism:password"
+  #    - selector: "mail"
+  #      name: "emailAddress"
+  #      namespace: "urn:ibm:security:authentication:asf:mechanism:password"

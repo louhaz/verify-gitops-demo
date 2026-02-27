@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: isvd-proxy-config
+data:
+  config.yaml: |
+    general:
+      id: isvd-proxy
+      
+      ports:
+        ldap: 0
+        ldaps: 9636
+
+      ssl:
+        cert-label: server-key
+
+      json-logging: false
+
+      license:
+        accept: limited
+        key: secret:isvd-secret/license-key
+
+      key-stash: "B64:GAAAAHM1Q2lqMCtLYVppZUhOemprZi9XSGc9PthOcHIiXmA9RlB0Rji/nsd3MpTYvRzUn5joE804v57HdzKU2L0c1J+Y6BPNnceUEUr3I0I4v57HdzKU2L0c1J+Y6BPNnceUEUr3I0I/+VsYL0fIEQ=="
+
+      admin:
+        dn: cn=root
+        pwd: secret:isvd-secret/admin_password
+
+    keyfile:
+      keys:
+        - label: server-key
+          key: secret:isvd-secret/server_key
+  

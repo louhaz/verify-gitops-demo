@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: ibm-verify-operators
+spec:
+  generators:
+  - list:
+      elements:
+        - name: verify-access
+        - name: verify-directory
+  template:
+    metadata:
+      name: '{{name}}-operator'
+      labels:
+        group: applications
+      annotations:
+        argocd.argoproj.io/sync-wave: "100"
+    spec:
+      project: ibm-verify-operators
+      source:
+        path: 'components/operators/{{name}}/base'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: ibm-verify
+      syncPolicy:
+        automated:
+          selfHeal: true

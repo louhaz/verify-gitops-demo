@@ -1,0 +1,111 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: ivia-config
+  labels:
+    app: ivia-config
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ivia-config
+  template:
+    metadata:
+      labels:
+        app: ivia-config
+    spec:
+      serviceAccountName: ivia-anyuid
+      securityContext:
+        fsGroup: 0
+      containers:
+        - name: ivia-config
+          readinessProbe:
+            exec:
+              command:
+                - /sbin/health_check.sh
+            timeoutSeconds: 3
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            exec:
+              command:
+                - /sbin/health_check.sh
+                - livenessProbe
+            timeoutSeconds: 3
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          env:
+            - name: CONFIG_SERVICE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: verify-access-operator
+                  key: url
+                  optional: false
+            - name: CONFIG_SERVICE_USER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: verify-access-operator
+                  key: user
+                  optional: false
+            - name: CONFIG_SERVICE_USER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: verify-access-operator
+                  key: rw.pwd
+                  optional: false
+            - name: CONFIG_SERVICE_TLS_CACERT
+              value: operator
+            - name: SNAPSHOT_ID
+              value: published
+            - name: INSTANCE
+              value: default
+            - name: DEBUG
+              value: "TRUE"
+            - name: LANG
+              value: en_US.utf8
+            - name: CONTAINER_TIMEZONE
+              value: Europe/Stockholm
+          ports:
+            - name: https
+              containerPort: 9443
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          startupProbe:
+            exec:
+              command:
+                - /sbin/health_check.sh
+                - startupProbe
+            initialDelaySeconds: 5
+            timeoutSeconds: 20
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 30
+          volumeMounts:
+            - name: ivia-config
+              mountPath: /var/shared
+            - name: verify-access-operator
+              readOnly: true
+              mountPath: /tmp/verify-access-operator.crt
+              subPath: tls.cert
+          image: icr.io/ivia/ivia-config:11.0.1.0
+          resources:
+            limits:
+              cpu: "1"
+              ephemeral-storage: 20Gi
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              ephemeral-storage: 200Mi
+              memory: 100Mi
+      volumes:
+        - name: ivia-config
+          persistentVolumeClaim:
+            claimName: ivia-config-pvc
+        - name: verify-access-operator
+          secret:
+            secretName: verify-access-operator
+            items:
+              - key: tls.cert
+                path: tls.cert

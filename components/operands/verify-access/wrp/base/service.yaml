@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ivia-wrp
+spec:
+  ports:
+    - port: 9443
+      name: ivia
+      protocol: TCP
+      targetPort: https
+  selector:
+    app: ivia-wrp

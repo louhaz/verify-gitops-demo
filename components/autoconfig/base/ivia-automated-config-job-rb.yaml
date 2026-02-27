@@ -1,0 +1,12 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: ivia-automated-config-job-rb
+subjects:
+  - kind: ServiceAccount
+    name: ivia-automated-config-job
+    namespace: ibm-verify
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ivia-automated-config-job

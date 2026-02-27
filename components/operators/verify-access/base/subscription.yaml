@@ -1,0 +1,16 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: ibm-security-verify-access-operator
+spec:
+  channel: stable
+  installPlanApproval: Automatic
+  name: ibm-security-verify-access-operator
+  source: certified-operators
+  sourceNamespace: openshift-marketplace
+  config:
+    resources:
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
+

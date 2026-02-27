@@ -1,0 +1,14 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: ivia-wrp
+  namespace: ibm-verify
+spec:
+  to:
+    kind: Service
+    name: ivia-wrp
+  tls:
+    termination: passthrough
+    insecureEdgeTerminationPolicy: Redirect
+  port:
+    targetPort: ivia

@@ -1,0 +1,1 @@
+console.log("Rule 1 executed");

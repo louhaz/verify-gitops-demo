@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: ibm-verify-operands
+spec:
+  generators:
+  - list:
+      elements:
+        - name: config
+          product: verify-access
+          sync-wave: "200"
+        - name: wrp
+          product: verify-access
+          sync-wave: "200"
+        - name: runtime
+          product: verify-access
+          sync-wave: "200"
+  template:
+    metadata:
+      name: '{{name}}'
+      labels:
+        group: applications
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{sync-wave}}'
+    spec:
+      project: ibm-verify-operands
+      source:
+        path: 'env/odf/operands/{{product}}/{{name}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: ibm-verify
+      syncPolicy:
+        automated:
+          selfHeal: true

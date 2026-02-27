@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ivia-runtime-db
+spec:
+  selector:
+    matchLabels:
+      app: ivia-runtime-db
+  replicas: 1
+  template:
+    metadata:
+      name: ivia-runtime-db
+      labels:
+        app: ivia-runtime-db
+    spec:
+      serviceAccountName: ivia-anyuid
+      securityContext:
+        fsGroup: 70
+      volumes:
+        - name: ivia-runtime-db
+          persistentVolumeClaim:
+            claimName: ivia-runtime-db-pvc
+      containers:
+        - name: ivia-runtime-db
+          image: icr.io/ivia/ivia-postgresql:11.0.1.0
+          ports:
+            - containerPort: 5432
+              name: postgresql
+          # Environment definition. In a production environment we
+          # would not enable UNSECURE mode
+          env:
+            - name: POSTGRES_UNSECURE
+              value: "true"
+            - name: POSTGRES_USER
+              value: ivia
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ivia-secrets
+                  key: postgres-passwd
+                  optional: false
+            - name: POSTGRES_DB
+              value: ivia
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: ivia-runtime-db

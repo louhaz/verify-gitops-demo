@@ -1,0 +1,15 @@
+# 
+# idsldapadd -Z -K /home/idsldap/idsslapd-idsldap/etc/server.kdb -h 127.0.0.1 -p 9636 -D cn=root -w <password> -i ./management-user.ldif
+# 
+
+dn: cn=manager,cn=ibmpolicies 
+changetype: add
+objectClass: inetOrgPerson 
+cn: manager
+sn: manager 
+userpassword: passw0rd1
+
+dn: globalGroupName=GlobalAdminGroup,cn=ibmpolicies 
+changetype: modify
+add: member
+member: cn=manager,cn=ibmpolicies

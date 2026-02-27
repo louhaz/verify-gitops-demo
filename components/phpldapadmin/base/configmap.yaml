@@ -1,0 +1,12 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: phpldapadmin
+data:
+  PHPLDAPADMIN_HTTPS: 'false'
+  PHPLDAPADMIN_LDAP_CLIENT_TLS_REQCERT: never
+  PHPLDAPADMIN_LDAP_HOSTS: >-
+    #PYTHON2BASH:[{ 'openldap.ibm-verify.svc': [{'server':
+    [{'tls': False},{'port':389}]},{'login': [{'bind_id':
+    'cn=root,secAuthority=Default'  }]}]}]
+  PHPLDAPADMIN_TRUST_PROXY_SSL: 'true'

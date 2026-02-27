@@ -1,0 +1,66 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ivia-automated-config-job
+spec:
+  selector: {}
+  backoffLimit: 0
+  template:
+    metadata:
+      name: ivia-automated-config-job
+    spec:
+      serviceAccount: ivia-automated-config-job
+      initContainers:
+      - name: wait-for-config-service
+        image: ghcr.io/nordic-mvp-gitops-repos/ibmvia-autoconf-image:sha-21f2c7b
+        args:
+        - /bin/sh
+        - -c
+        - >
+          set -x;
+          while [ $(curl -k -sw '%{http_code}' "https://ivia-config.ibm-verify.svc.cluster.local:9443" -o /dev/null) -ne 302 ]; do
+            sleep 15;
+          done
+      containers:
+        - name: create-config
+          imagePullPolicy: Always
+          image: ghcr.io/nordic-mvp-gitops-repos/ibmvia-autoconf-image:sha-21f2c7b
+          command:
+            - bash
+            - -c
+            - |
+              export IVIA_CONFIG_BASE=/tmp/config
+              export IVIA_MGMT_BASE_URL=https://ivia-config.ibm-verify.svc.cluster.local:9443
+              python -m ibmvia_autoconf
+            #- "while true; do sleep 30; done;" # For debugging
+          volumeMounts:
+            - name: config-volume
+              mountPath: /tmp/config
+            - name: config-volume
+              mountPath: /tmp/pki/postgresql.pem
+              subPath: postgresql.pem
+            - name: config-volume
+              mountPath: /tmp/pki/openldap.pem
+              subPath: openldap.pem
+   #         - name: sample-certificate-secret-volume
+   #           mountPath: /tmp/pki/tls.crt
+   #           subPath: tls.crt
+            - name: mapping-rules-volume
+              mountPath: /tmp/config/mapping-rules
+            - name: isvd-cert
+              mountPath: /tmp/pki/server_cert
+              subpath: server_cert
+      restartPolicy: Never
+      volumes:
+        - name: config-volume
+          configMap:
+            name: automated-config
+        - name: mapping-rules-volume
+          configMap:
+            name: mapping-rules
+        - name: isvd-cert
+          secret:
+            secretName: isvd-secret
+        #- name: sample-certificate-secret-volume
+        #  secret:
+        #    secretName: sample-certificate-secret

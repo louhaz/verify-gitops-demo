@@ -1,0 +1,26 @@
+apiVersion: ibm.com/v1
+kind: IBMSecurityVerifyDirectory
+metadata:
+  name: isvd
+spec:
+  replicas:
+    pvcs:
+      - isvd-master-pvc
+
+  pods:
+    securityContext:
+      runAsNonRoot: true
+
+    image:
+      repo: icr.io/isvd
+      label: latest
+  
+    configMap:
+      proxy:
+        name: isvd-proxy-config
+        key: config.yaml
+      server:
+        name: isvd-server-config
+        key: config.yaml
+
+    serviceAccountName: isvd

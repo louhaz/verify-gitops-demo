@@ -1,0 +1,91 @@
+# Config for remote ldap using IBM Directory Server
+container:
+  k8s_deployments:
+    namespace: "ibm-verify"
+    runtime: 
+      - "ivia-runtime"
+    webseal:
+      - "ivia-wrp"
+  admin_cfg:
+    session_timeout: 720
+  account_management:
+    users:
+    - name: "cfgsvc"
+      operation: "update"
+      password: !secret ibm-verify/ivia-secrets:cfgsvc-passwd
+  management_authorization:
+    authorization_enforcement: True
+    roles:
+    - operation: "update"
+      name: "Configuration Service"
+      users:
+      - name: "cfgsvc"
+        type: "local"
+      features:
+      - name: "shared_volume"
+        access: "w"
+  ssl_certificates:
+    - name: isvd
+      load_certificates:
+        - port: 9636
+          server: isvd-isvd-master-pvc
+          label: isvd
+    - name: "lmi_trust_store"
+      signer_certificates:
+      - "/tmp/pki/postgresql.pem"
+    - name: "rt_profile_keys"
+      signer_certificates:
+      - "/tmp/pki/postgresql.pem"
+  cluster:
+    runtime_database:
+      host: "ivia-runtime-db.ibm-verify.svc.cluster.local"
+      port: 5432
+      type: "postgresql"
+      user: "ivia"
+      password: !secret ibm-verify/ivia-secrets:postgres-passwd
+      ssl: False
+      db_name: "ivia"
+  activation: #Activation codes
+    #trial_license: !secret ibm-verify/ivia-secrets:trial_license
+    webseal: !secret ibm-verify/ivia-secrets:base-code
+    access_control: !secret ibm-verify/ivia-secrets:aac-code
+    federation: !secret ibm-verify/ivia-secrets:fed-code
+  #mapping_rules:
+  #- type: "InfoMap"
+  #  files:
+  #  - /tmp/config/mapping-rules/
+webseal:
+  runtime:
+    admin_user: sec_master
+    admin_password: !secret ibm-verify/ivia-secrets:sec-passwd
+    admin_cert_lifetime: 1460
+    domain: "Default"
+    policy_server: local
+    user_registry: ldap
+    ldap:
+      host: "isvd-isvd-master-pvc"
+      port: 9636
+      dn: !secret ibm-verify/ivia-secrets:ldap-binddn
+      dn_password: !secret ibm-verify/ivia-secrets:ldap-passwd
+      cert_label: isvd
+      key_file: isvd
+  reverse_proxy:
+     - name: "default"
+       # The host parameter will always be the hostname of the config container in a container deployment
+       host: ivia-config
+       http:
+         enabled: "no"
+       https:
+         enabled: "yes"
+       ldap:
+         ssl: "yes"
+         port: 9636
+         cert_file: isvd
+         key_file: isvd
+       domain: "Default"
+       junctions:
+         - junction_point: "/demo"
+           description: "demo junction point"
+           junction_type: "tcp"
+           server_hostname: demo-app
+           server_port: 8080
