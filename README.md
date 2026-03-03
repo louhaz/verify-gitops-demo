@@ -18,7 +18,7 @@ There are several options provided in this repo:
 - Using remote LDAP with the provided openldap image part of verify access
 - Using remote LDAP with IBM Verify Directory
 
-See [config directory](components/autoconfig/base/config/config.yaml) for different examples. Current configuration is using IBM Verify Directory.
+See [config directory](components/autoconfig/base/config/config.yaml) for different examples. Current configuration is using local (embedded) LDAP.
 
 ## Installation
 

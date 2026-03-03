@@ -16,7 +16,7 @@ resources:
   - autoconfig.yaml
   - postgresql.yaml
   #- openldap.yaml
-  - verify-directory.yaml
+  #- verify-directory.yaml
   #- phpldapadmin.yaml
   - demo.yaml
  
@@ -28,7 +28,7 @@ patches:
   patch: |-
     - op: add
       path: /spec/source/repoURL
-      value: https://github.com/Nordic-MVP-GitOps-Repos/ibm-verify-gitops.git
+      value: https://github.com/louhaz/verify-gitops-demo
     - op: add
       path: /spec/source/targetRevision
       value: HEAD
@@ -38,7 +38,7 @@ patches:
   patch: |-
     - op: add
       path: /spec/template/spec/source/repoURL
-      value: https://github.com/Nordic-MVP-GitOps-Repos/ibm-verify-gitops.git
+      value: https://github.com/louhaz/verify-gitops-demo
     - op: add
       path: /spec/template/spec/source/targetRevision
       value: HEAD
