@@ -20,7 +20,9 @@ spec:
           set -x;
           while [ $(curl -k -sw '%{http_code}' "https://ivia-config.ibm-verify.svc.cluster.local:9443" -o /dev/null) -ne 302 ]; do
             sleep 15;
-          done
+          done;
+          echo "Config service responding, waiting additional 60s for full initialization...";
+          sleep 60
       containers:
         - name: create-config
           imagePullPolicy: Always
