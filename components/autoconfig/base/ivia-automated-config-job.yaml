@@ -12,7 +12,7 @@ spec:
       serviceAccount: ivia-automated-config-job
       initContainers:
       - name: wait-for-config-service
-        image: ghcr.io/nordic-mvp-gitops-repos/ibmvia-autoconf-image:sha-8cf710e
+        image: ghcr.io/nordic-mvp-gitops-repos/ibmvia-autoconf-image:sha-21f2c7b
         args:
         - /bin/sh
         - -c
@@ -24,7 +24,7 @@ spec:
       containers:
         - name: create-config
           imagePullPolicy: Always
-          image: ghcr.io/nordic-mvp-gitops-repos/ibmvia-autoconf-image:sha-8cf710e
+          image: ghcr.io/nordic-mvp-gitops-repos/ibmvia-autoconf-image:sha-21f2c7b
           command:
             - bash
             - -c
