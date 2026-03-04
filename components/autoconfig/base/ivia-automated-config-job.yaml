@@ -47,9 +47,9 @@ spec:
    #           subPath: tls.crt
             - name: mapping-rules-volume
               mountPath: /tmp/config/mapping-rules
-            - name: isvd-cert
-              mountPath: /tmp/pki/server_cert
-              subpath: server_cert
+            # - name: isvd-cert
+            #   mountPath: /tmp/pki/server_cert
+            #   subpath: server_cert
       restartPolicy: Never
       volumes:
         - name: config-volume
@@ -58,9 +58,9 @@ spec:
         - name: mapping-rules-volume
           configMap:
             name: mapping-rules
-        - name: isvd-cert
-          secret:
-            secretName: isvd-secret
+        # - name: isvd-cert
+        #   secret:
+        #     secretName: isvd-secret
         #- name: sample-certificate-secret-volume
         #  secret:
         #    secretName: sample-certificate-secret
