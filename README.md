@@ -20,6 +20,30 @@ There are several options provided in this repo:
 
 See [config directory](components/autoconfig/base/config/config.yaml) for different examples. Current configuration is using local (embedded) LDAP.
 
+## Secret Management
+
+This repository supports two approaches for managing secrets:
+
+### Option 1: Kubernetes Secrets (Default)
+Secrets are created directly in Kubernetes using `oc create secret` commands. This is the simpler approach and is suitable for development and testing environments.
+
+### Option 2: HashiCorp Vault (Recommended for Production)
+For enhanced security and centralized secret management, you can integrate HashiCorp Vault. Vault provides:
+- Centralized secret storage and management
+- Dynamic secret generation
+- Secret rotation capabilities
+- Detailed audit logging
+- Fine-grained access control
+
+**📖 For complete Vault integration instructions, see [VAULT_INTEGRATION.md](VAULT_INTEGRATION.md)**
+
+The Vault integration guide includes:
+- Step-by-step setup instructions
+- Architecture diagrams
+- Configuration examples
+- Migration scripts
+- Troubleshooting tips
+
 ## Installation
 
 ### Prerequisites
@@ -38,6 +62,8 @@ oc new-project ibm-verify
 ```
 
 #### Create secret with passwords and activation keys
+
+> **Note:** If you're using Vault for secret management, follow the [Vault Integration Guide](VAULT_INTEGRATION.md) instead of creating Kubernetes secrets directly.
 
 Literals that is not added to the git repo needs to be added in a secret. Replace the values marked with `<>` in the command below (here using Openshift CLI).
 
