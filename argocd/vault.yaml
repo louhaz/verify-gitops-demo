@@ -15,14 +15,14 @@ spec:
   source:
     chart: vault
     repoURL: https://helm.releases.hashicorp.com
-    targetRevision: 0.28.1
+    targetRevision: 0.32.0
     helm:
       values: |
         server:
           enabled: true
           image:
             repository: hashicorp/vault
-            tag: 1.17.2
+            tag: 1.21.2
           resources:
             requests:
               memory: 256Mi
