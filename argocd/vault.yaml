@@ -3,8 +3,6 @@ kind: Application
 metadata:
   name: vault
   namespace: openshift-gitops
-  labels:
-    group: applications
   annotations:
     argocd.argoproj.io/sync-wave: "200"
 spec:
