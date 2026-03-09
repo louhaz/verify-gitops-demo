@@ -4,6 +4,7 @@ metadata:
   name: ibm-verify-auth
   namespace: ibm-verify
 spec:
+  vaultConnectionRef: vault-connection
   method: kubernetes
   mount: kubernetes
   kubernetes:

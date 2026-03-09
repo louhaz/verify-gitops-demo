@@ -1,0 +1,10 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultConnection
+metadata:
+  name: vault-connection
+  namespace: ibm-verify
+spec:
+  address: http://vault.ibm-verify.svc.cluster.local:8200
+  skipTLSVerify: true
+
+# Made with Bob
