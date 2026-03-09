@@ -16,6 +16,26 @@ spec:
     targetRevision: 0.32.0
     helm:
       values: |
+        global:
+          openshift: true
+        
+        injector:
+          enabled: true
+          image:
+            repository: hashicorp/vault-k8s
+            tag: 1.4.1
+          agentImage:
+            repository: hashicorp/vault
+            tag: 1.21.2
+          securityContext:
+            pod:
+              runAsNonRoot: true
+              runAsGroup: null
+              runAsUser: null
+              fsGroup: null
+            container:
+              allowPrivilegeEscalation: false
+        
         server:
           enabled: true
           image:
@@ -45,6 +65,15 @@ spec:
               storage "file" {
                 path = "/vault/data"
               }
+          securityContext:
+            pod:
+              runAsNonRoot: true
+              runAsGroup: null
+              runAsUser: null
+              fsGroup: null
+            container:
+              allowPrivilegeEscalation: false
+        
         ui:
           enabled: true
           serviceType: ClusterIP
