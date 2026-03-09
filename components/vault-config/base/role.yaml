@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ibm-verify-vault-role
+  namespace: ibm-verify
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: ["secrets.hashicorp.com"]
+    resources: ["vaultauths", "vaultconnections", "vaultstaticsecrets"]
+    verbs: ["get", "list", "watch"]
+
+# Made with Bob
