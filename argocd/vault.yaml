@@ -35,12 +35,8 @@ spec:
               fsGroup: null
             container:
               allowPrivilegeEscalation: false
-          webhook:
-            annotations:
-              service.beta.openshift.io/serving-cert-secret-name: vault-injector-tls
           certs:
-            secretName: vault-injector-tls
-            caBundle: ""
+            secretName: null
         
         server:
           enabled: true
