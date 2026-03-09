@@ -36,4 +36,10 @@ rules:
       - security.openshift.io
     resources:
       - '*'
+  - verbs:
+      - '*'
+    apiGroups:
+      - secrets.hashicorp.com
+    resources:
+      - '*'
       
