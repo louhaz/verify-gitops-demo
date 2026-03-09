@@ -1,0 +1,15 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: ibm-verify-auth
+  namespace: ibm-verify
+spec:
+  method: kubernetes
+  mount: kubernetes
+  kubernetes:
+    role: ibm-verify
+    serviceAccount: ibm-verify-sa
+    audiences:
+      - vault
+
+# Made with Bob
