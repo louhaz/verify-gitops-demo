@@ -1,19 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: vault-config
+  name: vault-namespace
   namespace: openshift-gitops
-  labels:
-    group: applications
   annotations:
-    argocd.argoproj.io/sync-wave: "300"
+    argocd.argoproj.io/sync-wave: "10"
 spec:
   destination:
-    namespace: ibm-verify
+    namespace: vault
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: components/vault-config/base
+    path: components/vault-namespace/base
     repoURL: https://github.com/IBM-Security/verify-gitops-demo
     targetRevision: HEAD
   syncPolicy:
@@ -21,6 +19,6 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=false
+      - CreateNamespace=true
 
 # Made with Bob

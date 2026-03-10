@@ -10,13 +10,17 @@ resources:
 
   - common.yaml
 
+  - vault-namespace.yaml
+  - vault-common.yaml
+  - vault.yaml
+  - vault-rbac.yaml
+
   - operators/all-operators.yaml
   - operands/all-operands.yaml
 
+  - vault-config.yaml
   - autoconfig.yaml
   - postgresql.yaml
-  - vault.yaml
-  - vault-config.yaml
   #- openldap.yaml
   #- verify-directory.yaml
   #- phpldapadmin.yaml

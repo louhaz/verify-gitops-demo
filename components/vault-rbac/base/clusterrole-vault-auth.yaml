@@ -1,0 +1,22 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vault-secrets-operator-auth
+  labels:
+    app.kubernetes.io/name: vault
+    app.kubernetes.io/component: cross-namespace-auth
+rules:
+  # Allow service accounts to create token reviews for Vault authentication
+  - apiGroups: ["authentication.k8s.io"]
+    resources: ["tokenreviews"]
+    verbs: ["create"]
+  # Allow reading service account information
+  - apiGroups: [""]
+    resources: ["serviceaccounts"]
+    verbs: ["get", "list"]
+  # Allow reading secrets (for Vault Secrets Operator)
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+# Made with Bob

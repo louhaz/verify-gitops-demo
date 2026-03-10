@@ -1,0 +1,17 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ibm-verify-vault-auth
+  labels:
+    app.kubernetes.io/name: vault
+    app.kubernetes.io/component: cross-namespace-auth
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: vault-secrets-operator-auth
+subjects:
+  - kind: ServiceAccount
+    name: ibm-verify-sa
+    namespace: ibm-verify
+
+# Made with Bob

@@ -4,10 +4,10 @@ metadata:
   name: vault
   namespace: openshift-gitops
   annotations:
-    argocd.argoproj.io/sync-wave: "200"
+    argocd.argoproj.io/sync-wave: "30"
 spec:
   destination:
-    namespace: ibm-verify
+    namespace: vault
     server: https://kubernetes.default.svc
   project: default
   source:
