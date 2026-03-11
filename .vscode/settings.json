@@ -1,0 +1,7 @@
+{
+  "yaml.customTags": [
+    "!secret scalar"
+  ],
+  "yaml.validate": true,
+  "yaml.format.enable": true
+}

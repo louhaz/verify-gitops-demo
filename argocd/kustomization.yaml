@@ -15,11 +15,11 @@ resources:
   - vault.yaml
   - vault-rbac.yaml
 
-  - operators/all-operators.yaml
-  - operands/all-operands.yaml
+  #- operators/all-operators.yaml
+  #- operands/all-operands.yaml
 
   - vault-config.yaml
-  - autoconfig.yaml
+  #- autoconfig.yaml
   - postgresql.yaml
   #- openldap.yaml
   #- verify-directory.yaml
