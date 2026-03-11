@@ -9,7 +9,7 @@ GitOps deployment for IBM Verify Access with HashiCorp Vault integration using l
 This repository uses ArgoCD (Red Hat OpenShift GitOps) to deploy IBM Verify Access with:
 - **IBM Verify Access**: Configuration service, Runtime, and Web Reverse Proxy
 - **Local LDAP**: Embedded LDAP directory within IBM Verify Access
-- **HashiCorp Vault**: Secure secret management (requires separate vault-gitops deployment)
+- **HashiCorp Vault**: Secure secret management (requires separate vault-gitops deployment, see https://github.com/louhaz/vault-gitops)
 - **PostgreSQL**: Database backend for Verify Access
 - **Automated Configuration**: Using the [ibmvia_autoconf](https://lachlan-ibm.github.io/ibmvia_autoconf) Python library
 
@@ -277,58 +277,8 @@ Located in `components/vault-config/base/`:
 - `vault-auth.yaml` - Kubernetes authentication
 - `vault-static-secret.yaml` - Secret synchronization
 
-### Updating Secrets
 
-To update secrets:
 
-```bash
-# Update in Vault
-kubectl exec -n vault vault-0 -- vault kv put ibm-verify/ivia-secrets \
-  cfgsvc-passwd=<new-password> \
-  # ... other secrets
-
-# Secrets will automatically sync to Kubernetes within 30 seconds
-# Restart pods to pick up new secrets
-oc rollout restart deployment/ivia-config -n ibm-verify
-```
-
-## Troubleshooting
-
-### Vault Secrets Not Syncing
-
-```bash
-# Check VaultStaticSecret status
-oc describe vaultstaticsecret ivia-secrets -n ibm-verify
-
-# Check Vault Secrets Operator logs
-oc logs -n vault-secrets-operator-system deployment/vault-secrets-operator-controller-manager
-
-# Verify Vault is accessible
-oc exec -n ibm-verify -it deployment/ivia-config -- curl http://vault.vault.svc.cluster.local:8200/v1/sys/health
-```
-
-### IBM Verify Access Pods Not Starting
-
-```bash
-# Check pod status
-oc get pods -n ibm-verify
-
-# Check pod logs
-oc logs -n ibm-verify <pod-name>
-
-# Check events
-oc get events -n ibm-verify --sort-by='.lastTimestamp'
-```
-
-### Configuration Job Failed
-
-```bash
-# Check job status
-oc get jobs -n ibm-verify
-
-# Check job logs
-oc logs -n ibm-verify job/ivia-automated-config
-```
 
 ## Repository Structure
 
