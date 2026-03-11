@@ -24,7 +24,7 @@ resources:
   #- openldap.yaml
   #- verify-directory.yaml
   #- phpldapadmin.yaml
-  - demo.yaml
+  #- demo.yaml
  
 patches:
 - target:
