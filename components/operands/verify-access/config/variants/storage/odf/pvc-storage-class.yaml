@@ -3,4 +3,4 @@ kind: PersistentVolumeClaim
 metadata:
   name: ivia-config-pvc
 spec:
-  storageClassName: ocs-storagecluster-cephfs
+  storageClassName: ocs-external-storagecluster-ceph-rbd
